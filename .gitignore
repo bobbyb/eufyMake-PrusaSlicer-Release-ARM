@@ -1,6 +1,8 @@
 build*
 _build
 build_xcode
+deps_build
+deps/deps_build/
 lib
 bin
 .vs
