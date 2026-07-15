@@ -69,6 +69,10 @@ public:
 
 	void SetCustomContent(wxWindow* customContent);
 protected:
+	// Position this dialog centered over the main application window (falls back to the
+	// parent's top-level window, then to screen-center). Call just before showing.
+	void centerOnMainWindow();
+
 	AnkerDialogPanel* m_panel;
 	wxString m_title;
 	wxSize m_size;

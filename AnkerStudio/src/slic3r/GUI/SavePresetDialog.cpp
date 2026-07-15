@@ -367,7 +367,7 @@ void SavePresetDialog::build(std::vector<Preset::Type> types, std::string suffix
     SetSizer(topSizer);
     topSizer->SetSizeHints(this);
 
-    this->CenterOnScreen();
+    this->CenterOnParent();
 
 #ifdef _WIN32
     wxGetApp().UpdateDlgDarkUI(this);
@@ -1020,7 +1020,7 @@ void AnkerSavePresetDialog::build(std::vector<Preset::Type> types, std::string s
     SetSizer(topSizer);
     topSizer->SetSizeHints(this);
 
-    this->CenterOnScreen();
+    this->CenterOnParent();
     // add by allen for ankerCfgDlg AnkerSavePresetDialog
 //#ifdef _WIN32
 //    wxGetApp().UpdateDlgDarkUI(this);

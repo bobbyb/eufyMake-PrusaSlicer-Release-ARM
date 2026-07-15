@@ -4211,15 +4211,27 @@ void GUI_App::window_pos_restore(wxTopLevelWindow* window, const std::string &na
     if (name.empty()) { return; }
 
 #ifdef __WXOSX__
-    // Fixed startup placement for the main window only: right two-thirds of the
-    // display, full usable height. Other windows (settings dialog, etc.) keep the
-    // normal center/maximize-restore behavior below.
+    // Main window placement on macOS. If the user has previously moved/resized it, restore
+    // that saved geometry (persist_window_geometry saves it on close). Otherwise, on first
+    // run, use the default startup placement: right two-thirds of the display, full usable
+    // height. Other windows (settings dialog, etc.) keep the normal behavior below.
     if (name == "mainframe") {
-        int display_idx = wxDisplay::GetFromWindow(window);
-        wxRect area = wxDisplay(display_idx == wxNOT_FOUND ? 0u : static_cast<unsigned>(display_idx)).GetClientArea();
-        int width = area.width * 2 / 3;
-        window->SetSize(width, area.height);
-        window->SetPosition(wxPoint(area.x + area.width - width, area.y));
+        const auto config_key = (boost::format("window_%1%") % name).str();
+        boost::optional<WindowMetrics> metrics;
+        if (app_config->has(config_key))
+            metrics = WindowMetrics::deserialize(app_config->get(config_key));
+        if (metrics) {
+            const wxRect& rect = metrics->get_rect();
+            window->SetSize(rect.GetSize());
+            window->SetPosition(rect.GetPosition());
+            window->Maximize(metrics->get_maximized());
+        } else {
+            int display_idx = wxDisplay::GetFromWindow(window);
+            wxRect area = wxDisplay(display_idx == wxNOT_FOUND ? 0u : static_cast<unsigned>(display_idx)).GetClientArea();
+            int width = area.width * 2 / 3;
+            window->SetSize(width, area.height);
+            window->SetPosition(wxPoint(area.x + area.width - width, area.y));
+        }
         return;
     }
 #endif

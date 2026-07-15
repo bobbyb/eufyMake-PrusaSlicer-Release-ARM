@@ -128,7 +128,7 @@ GalleryDialog::GalleryDialog(wxWindow* parent) :
     topSizer->SetSizeHints(this);
 
     wxGetApp().UpdateDlgDarkUI(this);
-    this->CenterOnScreen();
+    this->CenterOnParent();
 
     this->SetDropTarget(new GalleryDropTarget(this));
 }

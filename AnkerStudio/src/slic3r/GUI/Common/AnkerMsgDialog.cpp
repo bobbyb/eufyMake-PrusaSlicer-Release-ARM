@@ -29,15 +29,22 @@ AnkerMsgDialog::AnkerMsgDialog(wxWindow* parent, std::string message, std::strin
     initUI();
     initEvent();
     
-    if (parent == nullptr)
+    // Center on the main application window (or the parent's top-level window). The old
+    // code centered on the screen, or offset from the parent's *size* without its screen
+    // position -- both landed the dialog off the app window.
+    wxWindow* ref = parent ? wxGetTopLevelParent(parent) : nullptr;
+    if (!ref)
+        ref = Slic3r::GUI::wxGetApp().GetTopWindow();
+    const wxSize dlgSize = GetSize();
+    if (ref && ref->IsShownOnScreen())
     {
-        int screenH = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y, nullptr);
-        int screenW = wxSystemSettings::GetMetric(wxSYS_SCREEN_X, nullptr);
-        SetPosition(wxPoint((screenW - 400) / 2, (screenH - 180) / 2));
+        const wxRect r = ref->GetScreenRect();
+        SetPosition(wxPoint(r.x + (r.width - dlgSize.GetWidth()) / 2,
+                            r.y + (r.height - dlgSize.GetHeight()) / 2));
     }
     else
     {
-        SetPosition(wxPoint((parent->GetSize().x - 400) / 2, (parent->GetSize().y - 180) / 2));
+        CenterOnScreen();
     }
 }
 

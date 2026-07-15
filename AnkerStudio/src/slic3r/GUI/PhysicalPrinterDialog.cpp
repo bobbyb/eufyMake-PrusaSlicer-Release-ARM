@@ -244,7 +244,7 @@ PhysicalPrinterDialog::PhysicalPrinterDialog(wxWindow* parent, wxString printer_
     this->Fit();
     this->Layout();
 
-    this->CenterOnScreen();
+    this->CenterOnParent();
 }
 
 PhysicalPrinterDialog::~PhysicalPrinterDialog()

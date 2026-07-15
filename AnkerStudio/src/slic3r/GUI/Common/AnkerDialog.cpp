@@ -189,9 +189,28 @@ void AnkerDialog::setBackgroundColour(const wxColour& color)
 	SetBackgroundColour(color);
 }
 
+void AnkerDialog::centerOnMainWindow()
+{
+	wxWindow* ref = nullptr;
+	if (wxWindow* parent = GetParent())
+		ref = wxGetTopLevelParent(parent);
+	if (!ref)
+		ref = Slic3r::GUI::wxGetApp().GetTopWindow();
+	if (!ref || !ref->IsShownOnScreen()) {
+		CenterOnScreen();
+		return;
+	}
+	const wxRect refRect = ref->GetScreenRect();
+	const wxSize dlgSize = GetSize();
+	SetPosition(wxPoint(
+		refRect.x + (refRect.width  - dlgSize.GetWidth())  / 2,
+		refRect.y + (refRect.height - dlgSize.GetHeight()) / 2));
+}
+
 int AnkerDialog::ShowAnkerModal(int dialogType)
 {
 	InitDialogPanel(dialogType);
+	centerOnMainWindow();
 	return wxDialog::ShowModal();
 }
 
@@ -205,24 +224,28 @@ int AnkerDialog::ShowAnkerModalOkCancel(const wxString& okText, const wxString& 
 	if (!cancelText.empty()) {
 		displayPanel->setCancelBtnText(cancelText);
 	}
+	centerOnMainWindow();
 	return wxDialog::ShowModal();
 }
 
 bool AnkerDialog::ShowAnker(int dialogType)
 {
 	InitDialogPanel(dialogType);
+	centerOnMainWindow();
 	return wxDialog::Show();
 }
 
 int AnkerDialog::ShowAnkerModal2(int dialogType, const wxString& otherText, EventCallBack_T eventCallBack)
 {
 	InitDialogPanel2(dialogType, otherText, eventCallBack);
+	centerOnMainWindow();
 	return wxDialog::ShowModal();
 }
 
 bool AnkerDialog::ShowAnker2(int dialogType, EventCallBack_T eventCallBack)
 {
 	InitDialogPanel2(dialogType, "", eventCallBack);
+	centerOnMainWindow();
 	return wxDialog::Show();
 }
 
