@@ -147,9 +147,14 @@ void AnkerTaskPanel::initTimer()
         ANKER_LOG_INFO << "m_pModalingTimer Enter";
 
         auto finish_dialog = [&](bool bSuccess, AnkerPrintFinishDialog::PrintFinishInfo& result) {
-            int screenH = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y, nullptr);
-            int screenW = wxSystemSettings::GetMetric(wxSYS_SCREEN_X, nullptr);
-            m_pPrintFinishDialog->SetPosition(wxPoint((screenW - m_pPrintFinishDialog->GetSize().x) / 2, (screenH - m_pPrintFinishDialog->GetSize().y) / 2));
+            {
+                // Center on the main application window (fall back to the screen).
+                wxWindow* mainWin = Slic3r::GUI::wxGetApp().GetTopWindow();
+                wxRect mainRect = mainWin ? mainWin->GetScreenRect()
+                    : wxRect(0, 0, wxSystemSettings::GetMetric(wxSYS_SCREEN_X, nullptr), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y, nullptr));
+                wxSize dlgSize = m_pPrintFinishDialog->GetSize();
+                m_pPrintFinishDialog->SetPosition(wxPoint(mainRect.x + (mainRect.width - dlgSize.x) / 2, mainRect.y + (mainRect.height - dlgSize.y) / 2));
+            }
             m_pPrintFinishDialog->setCurrentDeviceSn(m_currentDeviceSn);
 
             AnkerGCodeImportDialog::GCodeImportResult importResult = m_pGCodeImportDialog->getImportResult();
@@ -280,9 +285,14 @@ void AnkerTaskPanel::initTimer()
             result.m_previewImage = importResult.m_previewImage;
 
             //result.m_filePath = currentDev->filp;
-            int screenH = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y, nullptr);
-            int screenW = wxSystemSettings::GetMetric(wxSYS_SCREEN_X, nullptr);
-            m_pPrintFinishDialog->SetPosition(wxPoint((screenW - m_pPrintFinishDialog->GetSize().x) / 2, (screenH - m_pPrintFinishDialog->GetSize().y) / 2));
+            {
+                // Center on the main application window (fall back to the screen).
+                wxWindow* mainWin = Slic3r::GUI::wxGetApp().GetTopWindow();
+                wxRect mainRect = mainWin ? mainWin->GetScreenRect()
+                    : wxRect(0, 0, wxSystemSettings::GetMetric(wxSYS_SCREEN_X, nullptr), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y, nullptr));
+                wxSize dlgSize = m_pPrintFinishDialog->GetSize();
+                m_pPrintFinishDialog->SetPosition(wxPoint(mainRect.x + (mainRect.width - dlgSize.x) / 2, mainRect.y + (mainRect.height - dlgSize.y) / 2));
+            }
             m_pPrintFinishDialog->setCurrentDeviceSn(m_currentDeviceSn);
             m_pPrintFinishDialog->ShowPrintFinishDialog(false, result);
             if (m_pPrintFinishDialog->ShowModal() == wxOK)
@@ -1399,9 +1409,14 @@ void AnkerTaskPanel::OnNewBtn(wxCommandEvent& event)
 
     m_modaling = true;
 
-    int screenH = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y, nullptr);
-    int screenW = wxSystemSettings::GetMetric(wxSYS_SCREEN_X, nullptr);
-    m_pGCodeImportDialog->SetPosition(wxPoint((screenW - m_pGCodeImportDialog->GetSize().x) / 2, (screenH - m_pGCodeImportDialog->GetSize().y) / 2));
+    {
+        // Center on the main application window (fall back to the screen).
+        wxWindow* mainWin = Slic3r::GUI::wxGetApp().GetTopWindow();
+        wxRect mainRect = mainWin ? mainWin->GetScreenRect()
+            : wxRect(0, 0, wxSystemSettings::GetMetric(wxSYS_SCREEN_X, nullptr), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y, nullptr));
+        wxSize dlgSize = m_pGCodeImportDialog->GetSize();
+        m_pGCodeImportDialog->SetPosition(wxPoint(mainRect.x + (mainRect.width - dlgSize.x) / 2, mainRect.y + (mainRect.height - dlgSize.y) / 2));
+    }
 
     if (m_pGCodeImportDialog->ShowModal() == wxOK)
         startPrint();
